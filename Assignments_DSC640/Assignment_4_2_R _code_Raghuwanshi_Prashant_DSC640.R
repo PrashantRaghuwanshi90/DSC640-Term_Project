@@ -1,0 +1,26 @@
+#install.packages("reshape")
+install.packages("treemapify")
+library(ggplot2)
+theme_set(theme_minimal())
+library(readxl)
+library(tidyverse)
+library(dplyr)
+library(reshape)
+library(treemapify)
+##### Set the working directory to the root of your DSC 520 directory
+
+setwd("C:/Users/21313711/Documents/DSC640/ex4-2/ex4-2")
+
+##### Load the `atusresp_2020.dat` to dataframe
+##### read source file unemployement-rate-1948-2010 into dataframe
+brithrate_yearly_df <- read.csv('birth-rates-yearly.csv', header=TRUE)
+ggplot(brithrate_yearly_df, aes(x=rate)) + geom_density(color = 'darkblue', fill = 'lightblue', alpha=0.8) + xlab('Birth Rate') + ylab('Density')+ labs(title = "Density Chart-R Program ", subtitle = "Birth Rate Density") + theme(plot.title = element_text(hjust = 0.5, size = 8), plot.subtitle = element_text(hjust = 0.5, size = 8))
+##### display firt 5 records
+crimerates_by_state_df <- read.csv('crimerates-by-state-2005.csv', header=TRUE)
+#Drop United States and District of Columbia
+crimerates_by_state_df <- crimerates_by_state_df[crimerates_by_state_df$state != 'United States', ]
+crimerates_by_state_df <- crimerates_by_state_df[crimerates_by_state_df$state != 'District of Columbia', ]
+ggplot(crimerates_by_state_df, aes(x=burglary, y=motor_vehicle_theft)) + geom_point() + labs(title = "Scatter Chart-R Program ",
+                                                                                             subtitle = "Aggravated Assault versus Motor Vehicle Theft") + theme(
+                                                                                               plot.title = element_text(hjust = 0.5, size = 8), plot.subtitle = element_text(hjust = 0.5, size = 8))
+ggplot(crimerates_by_state_df, aes(x = burglary, y = motor_vehicle_theft, size = population, color = population)) + geom_point(alpha = 0.5) + scale_size(range = c(.1, 15), name = 'Population', trans = 'log') + labs(title = "Bubble Chart-R Program ", subtitle = "Burglaries versus motor_vehicle_theft") + theme(plot.title = element_text(hjust = 0.5, size = 8), plot.subtitle = element_text(hjust = 0.5, size = 8)) + xlab("Burglaries") + ylab("motor_vehicle_theft")

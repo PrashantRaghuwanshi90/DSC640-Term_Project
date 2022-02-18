@@ -1,0 +1,63 @@
+---
+title: '5.2 Assignment: heat maps, spatial charts, and contour charts'
+author: "Raghuwanshi, Prashant"
+date: "02/14/2022"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+Course: DSC640-T301 Data Presentation & Visualization (2223-1)
+---
+##### Import, Plot, Summarize, and Save Data
+```{r}
+library(ggplot2)
+theme_set(theme_minimal())
+library(readxl)
+library(dplyr)
+```
+##### Set the working directory to the root of your DSC 520 directory
+```{r}
+setwd("C:/Users/21313711/Documents/DSC640/ex5-2/ex5-2/")
+```
+##### reading csv
+```{r}
+ppg2008_df <- read.csv("C:/Users/21313711/Documents/DSC640/ex5-2/ex5-2/ppg2008.csv")
+```
+```{r}
+costco_df <- read.csv("C:/Users/21313711/Documents/DSC640/ex5-2/ex5-2/costcos-geocoded.csv")
+
+df1 <- data.frame(ppg2008_df[,-1], row.names = ppg2008_df[,1])
+```
+##### heat map
+```{r}
+heatmap(as.matrix(df1), scale="column",col=heat.colors(100),main="Heat Map-R program- PPG DRUG TEST RESULT",Rowv=NA, Colv=NA)
+```
+
+##### contour map
+```{r}
+ggplot(data=ppg2008_df, aes(x=PTS, y=MIN)) +
+  ylim(15,50) + theme_bw()+
+  geom_point(alpha=0.1, col="red") + 
+  geom_density2d(color="black") +
+  ggtitle("Contour plot -R Program \n \n Contour Plot for PTS and MIN") +
+  theme(plot.title = element_text(hjust=0.5)) +
+  labs(x="Points", y="Minutes")
+```
+
+##### maps
+```{r}
+library(maps)
+library(mapdata)
+usa <- map_data("usa")
+
+cost <- costco_df[costco_df$Longitude > -130,]
+
+gg1 <- ggplot() + 
+  geom_polygon(data = usa, aes(x=long, y = lat, group = group), fill = "red", color = "blue") + 
+  coord_fixed(1.3)
+gg1 + 
+  geom_point(data=cost, aes(x=Longitude,y=Latitude), color="black",size=2)+
+  geom_point(data=cost, aes(x=Longitude,y=Latitude), color="yellow",size=1)+
+  ggtitle("Saptial Map-python \n\n COSTCO STORE LOCATIONS")
+
+```
