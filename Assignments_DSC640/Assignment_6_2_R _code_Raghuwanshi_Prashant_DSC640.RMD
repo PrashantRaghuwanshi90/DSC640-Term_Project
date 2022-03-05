@@ -1,0 +1,90 @@
+---
+title: '6.2 Assignment: histograms, box plots, and bullet charts'
+author: "Raghuwanshi, Prashant"
+date: "03/13/2022"
+output:
+  html_document:
+    df_print: paged
+  HTML: default
+  pdf_document: default
+Course: DSC640-T301 Data Presentation & Visualization (2223-1)
+---
+##### Import, Plot, Summarize, and Save Data
+```{r}
+#install.packages("rlang")
+#remove.packages("rlang")
+#install.packages("dplyr")
+library(dplyr)
+library(ggplot2)
+theme_set(theme_minimal())
+library(readxl)
+#install.packages("dplyr")
+library('magrittr')
+#source("BulletGraph.R", local=TRUE)
+#install.packages("devtools")
+#install.packages("GGally")
+library(devtools)
+require("d3Dashboard")
+```
+##### Set the working directory to the root of your DSC 520 directory
+```{r}
+#setwd("C:/Users/21313711/Documents/DSC640/ex6-2/ex6-2/")
+```
+##### reading csv
+```{r}
+# load birth rate data
+brate_df <- read.csv('C:/Users/21313711/Documents/DSC640/ex6-2/ex6-2/birth-rate.csv')
+
+# load crime data
+crime_df <- read.csv('C:/Users/21313711/Documents/DSC640/ex6-2/ex6-2/crimeratesbystate-formatted.csv') 
+
+# load education data
+education_df <- read.csv('C:/Users/21313711/Documents/DSC640/ex6-2/ex6-2/education.csv') 
+
+# format year columns
+colnames(brate_df) <- gsub("X", "", colnames(brate_df))
+```
+##### HISTOGRAM CHART
+```{r}
+options(repr.plot.width = 4, repr.plot.height = 4)
+##### create pivotted data for plotting
+brate_hist <- reshape2::melt(brate_df, id=c("Country")) %>%
+  dplyr::mutate("Country" = as.character(Country),
+                "Year" = as.character(variable),
+                "Population" = value,
+                "Population_int" = ceiling(value)) %>% 
+  dplyr::select(c("Country","Year","Population", "Population_int"))
+
+# create histogram of population data
+hist(brate_hist$Population_int, col=rgb(0.2,0.8,0.5,0.5) , border=F , main="")
+```
+#####  Box plot
+```{r}
+brate_box <- brate_hist %>% 
+  dplyr::filter(Country %in% c("United States", "India"))
+boxplot(brate_box$Population ~ brate_box$Country , col="grey")
+```
+#### Bullet chart
+```{r}
+crime_bullet <- crime_df %>% 
+  dplyr::filter(stringr::str_trim(state, "both") == "United States") %>% 
+  dplyr::select(c(state, burglary))
+
+ytd2005 <- list(
+  title=list("United States"),
+  subtitle=list("Burglary"),
+  range=list(c(0,500,750,1000)),
+  measures=list(c(0, crime_bullet$burglary)),
+  markers=list(250, 26, 550, 2100, 4.2))
+```
+### plot
+```{r}
+bulletGraph(ytd2005)
+```
+##### parallel plot
+```{r}
+education_parallel <- education_df %>% 
+  dplyr::filter(stringr::str_trim(state, "both") != "United States")
+MASS::parcoord(education_parallel[,c(2:4)] )
+```
+
